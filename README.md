@@ -1,3 +1,3 @@
 # Profiles REST API
 
-author: Aziz Rahman Yarzai
+Author: Aziz Rahman Yarzai
