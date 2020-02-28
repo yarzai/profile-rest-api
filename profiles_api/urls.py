@@ -5,12 +5,14 @@ from .views import (
     HelloAPIView,
     HelloViewSet,
     UserProfileViewSet,
-    UserLoginAPIView
+    UserLoginAPIView,
+    UserProfileFeedViewSet
 )
 
 router = DefaultRouter()
 router.register('hello-viewset', HelloViewSet, base_name="hello-viewset")
 router.register('profile', UserProfileViewSet)
+router.register('feed', UserProfileFeedViewSet)
 
 urlpatterns = [
     path('hello-view/', HelloAPIView.as_view()),
