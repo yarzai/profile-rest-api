@@ -1,7 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import HelloSerializer
+from .serializers import HelloSerializer, UserProfileSerializer
 from rest_framework import status
+from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from .models import UserProfile
+from .permissions import UpdateOwnProfile
 
 
 class HelloAPIView(APIView):
@@ -41,3 +45,56 @@ class HelloAPIView(APIView):
     def delete(self, reqest, pk=None):
         """ Delete an object """
         return Response({'message': 'DELETE'})
+
+
+class HelloViewSet(viewsets.ViewSet):
+    """ Test API ViewSet """
+
+    serializer_class = HelloSerializer
+
+    def list(self, reqest):
+        """ Return a hello message """
+
+        a_viewset = [
+            'Uses actions (list, create, retrieve, update, partial_update)',
+            'Automatially maps to URLs using Routers',
+            'Provides more functionality with less code'
+        ]
+
+        return Response({'message': 'Hello !', 'a_viewset': a_viewset})
+
+    def create(self, reqest):
+        """ Create a new hello message """
+
+        serializer = self.serializer_class(data=reqest.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}!'
+            return Response({'message': message})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, reqest, pk=None):
+        """ Handle getting an objects """
+        return Response({'HTTP_method': 'GET'})
+
+    def update(self, reqest, pk=None):
+        """ Handle updating an object """
+        return Response({"HTTP_method": "PUT"})
+
+    def partial_update(self, reqest, pk=None):
+        """ Handle updating part of an object """
+        return Response({"HTTP_method": "PATCH"})
+
+    def destroy(self, reqest, pk=None):
+        """ Handle removing an object """
+        return Response({"HTTP_method": "DELETE"})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """ Handle creating an updating profiles """
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (UpdateOwnProfile,)
